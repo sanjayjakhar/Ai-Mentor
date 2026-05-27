@@ -81,44 +81,48 @@ const Dashboard = () => {
     fetchAllData();
   }, []);
   const calculateStats = () => {
+    // Base card shapes — used as fallback AND as the template for calculated values
+    const baseCards = [
+      {
+        icon: <Play className="w-5 h-5 text-blue-600" />,
+        label: "Ongoing Courses",
+        change: "+0%",
+        bgColor: "bg-blue-50",
+        iconBg: "bg-blue-100",
+      },
+      {
+        icon: <CheckCircle className="w-5 h-5 text-green-600" />,
+        label: "Completed",
+        change: "+0",
+        bgColor: "bg-green-50",
+        iconBg: "bg-green-100",
+      },
+      {
+        icon: <Award className="w-5 h-5 text-purple-600" />,
+        label: "Certificates",
+        change: "+0",
+        bgColor: "bg-purple-50",
+        iconBg: "bg-purple-100",
+      },
+      {
+        icon: <Clock className="w-5 h-5 text-orange-600" />,
+        label: "Hours Spent",
+        change: "+0h",
+        bgColor: "bg-orange-50",
+        iconBg: "bg-orange-100",
+      },
+    ];
+
     if (
       !user?.purchasedCourses ||
       !coursesData.statsCards ||
       coursesData.statsCards.length < 4
     ) {
       return [
-        {
-          icon: <Play className="w-5 h-5 text-blue-600" />,
-          value: data?.stats?.inProgress ?? 0,
-          label: "Ongoing Courses",
-          change: "+0%",
-          bgColor: "bg-blue-50",
-          iconBg: "bg-blue-100",
-        },
-        {
-          icon: <CheckCircle className="w-5 h-5 text-green-600" />,
-          value: data?.stats?.completed ?? 0,
-          label: "Completed",
-          change: "+0",
-          bgColor: "bg-green-50",
-          iconBg: "bg-green-100",
-        },
-        {
-          icon: <Award className="w-5 h-5 text-purple-600" />,
-          value:data?.stats?.certificatesEarned ?? 0,
-          label: "Certificates",
-          change: "+0",
-          bgColor: "bg-purple-50",
-          iconBg: "bg-purple-100",
-        },
-        {
-          icon: <Clock className="w-5 h-5 text-orange-600" />,
-          value: "0h",
-          label: "Hours Spent",
-          change: "+0h",
-          bgColor: "bg-orange-50",
-          iconBg: "bg-orange-100",
-        },
+        { ...baseCards[0], value: data?.stats?.inProgress ?? 0 },
+        { ...baseCards[1], value: data?.stats?.completed ?? 0 },
+        { ...baseCards[2], value: data?.stats?.certificatesEarned ?? 0 },
+        { ...baseCards[3], value: "0h" },
       ];
     }
 
@@ -150,26 +154,12 @@ const Dashboard = () => {
       }
     });
 
-    const result = [
-      {
-        ...baseCards[0],
-        value: coursesInProgress.toString(),
-      },
-      {
-        ...baseCards[1],
-        value: completedCourses.toString(),
-      },
-      {
-        ...baseCards[2],
-        value: certificates.toString(),
-      },
-      {
-        ...baseCards[3],
-        value: `${totalHours}h`,
-      },
+    return [
+      { ...baseCards[0], value: coursesInProgress.toString() },
+      { ...baseCards[1], value: completedCourses.toString() },
+      { ...baseCards[2], value: certificates.toString() },
+      { ...baseCards[3], value: `${totalHours}h` },
     ];
-
-    return result;
   };
 
   const dynamicStatsCards = calculateStats();

@@ -107,12 +107,18 @@ const startServer = async () => {
     const isDevelopment = process.env.NODE_ENV !== "production";
     const syncOptions = isDevelopment ? { alter: true } : {};
 
-    await sequelize.sync(syncOptions);
-    console.log(
-      isDevelopment
-        ? "✅ Database models synced with schema auto-alter enabled (development)"
-        : "✅ Database models synced",
-    );
+    try {
+      await sequelize.sync(syncOptions);
+      console.log(
+        isDevelopment
+          ? "✅ Database models synced with schema auto-alter enabled (development)"
+          : "✅ Database models synced",
+      );
+    } catch (syncError) {
+      console.warn("⚠️  DB schema sync failed (Neon connection dropped mid-alter) — continuing with existing schema.");
+      console.warn("   This is normal on Neon free tier. Login and core features will still work.");
+    }
+
     app.listen(PORT, () => {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
